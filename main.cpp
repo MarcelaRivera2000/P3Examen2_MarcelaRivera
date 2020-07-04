@@ -6,11 +6,13 @@
 #include "Object.h"
 #include "Operador.h"
 #include "Matriz.h"
+#include "Archivo.h"
 
 using namespace std; 
 using std::cin;
 using std::endl;
 using std::cout;
+Archivo arch;
 
 vector<Object*> lista;
 
@@ -28,22 +30,22 @@ int main(int argc, char** argv) {
 			cout<<"Operador creado..."<<endl;
 			
 		}else if (comando == "Imprimir"){
+				cout<<endl;
 				for (int i=0;i<lista.size();i++){
-				cout<<lista[i]->getChar()<<":"<<endl;
+				cout<<"Char "<<lista[i]->getChar()<<" :"<<endl;
 				
 				if(dynamic_cast<Matriz*>(lista[i])){
 					Matriz* auxx =dynamic_cast<Matriz*>(lista[i]);
 					for(int j=0;j<auxx->getTam();j++){
-					cout<<"| ";
-					for(int k=0;k<auxx->getTam();k++){
-						cout<< auxx->getMatriz()[j][k];
-					}
-					cout<<" |";
+						for(int k=0;k<auxx->getTam();k++){
+							cout<< " ["<<auxx->getMatriz()[j][k]<<"] ";
+						}
+					cout<<endl;
 					}			
 				}
 			}	
-		}
-		
+			cout<<endl;
+		}else{
 		for(int i=0;i<comando.size();i++){
 			if(comando[i] == '+'||comando[i] == '-'||comando[i] == '*'){
 				op=1;
@@ -52,100 +54,143 @@ int main(int argc, char** argv) {
 		}
 		if(op==0){
 			int tam,cont=0;
-			int*** matriz;
+			int** matriz;
 			char nombre=comando[0];
 			for(int i=1;i<comando.size();i++){
-				if(comando[i]=='='||comando[i]=='['||comando[i]==','||comando[i]==']'){
-					i++;
-				}else{
+				if(comando[i]!='='&& comando[i]!='['&&comando[i]!=','&&comando[i]!=']'){
 					cont++;
 				}
 			}
 			tam=sqrt(cont);	
-			matriz = new int**[tam];			
+			matriz = new int*[tam];			
 			for(int i=0; i<tam;i++){
-				matriz[i]=new int*[tam];
+				matriz[i]=new int[tam];
 				for(int j=0; j<tam;j++){
 					matriz[i][j]=NULL;
 				}
 			}
 			
-			/*int aux1=0;
+			string x=comando.substr(1,comando.size());
+			cout<<"x: "<<x<<endl;
+			int aux1=2;
 			for(int i=0;i<tam;i++){
 				for(int j=0;j<tam;j++){
-					if(aux1!=0 && (comando[aux1]!='='||comando[aux1]!='['||comando[aux1]!=','||comando[aux1]!=']')){
-						matriz[i][j]=new int((int)comando[aux1]);
-						cout<<"hola"<<endl;
-					}
-					aux1++;
+					string numer="";
+					numer+=x[aux1];
+						matriz[i][j] = stoi(numer);	
+					aux1+=2;
 				}	
 			}
+			
+			
 			cout<<"matriz: "<<endl;
 			for(int i=0;i<tam;i++){
 				for(int j=0;j<tam;j++){
-					cout<<matriz[i][j];
+					cout<<" ["<<matriz[i][j]<<"] ";
 				}	
 			cout<<endl;
 			}
-				*/
+			lista.push_back(new Matriz(nombre,tam,matriz));
 			cout<<"Matriz creada..."<<endl;
+			arch.Escribir(lista);
 		}else{
-		
-			cout<<"Operacion terminada..."<<endl;
+			int cont1=0,cont2=0;
+			for(int i=0;i<comando.size();i++){
+				int** M1;
+				int** M2;
+				int tam;
+				string x=comando.substr(cont1,cont1+1);
+				string x2=comando.substr(cont1+2,cont1+1);
+				string x1=comando.substr(cont1+1,cont1+1);
+				for(int j=0;j<lista.size();j++){
+					if(dynamic_cast<Matriz*>(lista[i])){
+					Matriz* auxx =dynamic_cast<Matriz*>(lista[i]);
+					string a1="";
+					a1+=auxx->getChar();
+					if(a1==x){	
+						tam=auxx->getTam();
+					}
+					}	
+				}
+					M2 = new int*[tam];			
+					for(int i=0; i<tam;i++){
+						M2[i]=new int[tam];
+					for(int j=0; j<tam;j++){
+					M2[i][j]=NULL;
+				}
 		}
-		
+		M1 = new int*[tam];			
+			for(int i=0; i<tam;i++){
+				M1[i]=new int[tam];
+				for(int j=0; j<tam;j++){
+					M1[i][j]=NULL;
+				}
+		}
+				
+				for(int j=0;j<lista.size();j++){
+					if(dynamic_cast<Matriz*>(lista[i])){
+					Matriz* auxx =dynamic_cast<Matriz*>(lista[i]);
+					string a1="";
+					a1+=auxx->getChar();
+					if(a1==x){	
+					M1=auxx->getMatriz();
+					}else if(a1==x2){
+						M2=auxx->getMatriz();
+					}
+					}	
+				}
+				
+				int** M3;
+				M3 = new int*[tam];			
+				for(int i=0; i<tam;i++){
+				M3[i]=new int[tam];
+				for(int j=0; j<tam;j++){
+					M3[i][j]=NULL;
+				}
+				}
+				
+				
+				if(x1=="+"){
+				for (int i = 0; i < tam; i++) {
+            		for (int j = 0; j < tam; j++) {
+            
+                 		   M3[i][j] = M1[i][j] + M2[i][j];
+             		   }
+           			 }
+				}else if (x1=="-"){
+					for (int i = 0; i < tam; i++) {
+           			 for (int j = 0; j < tam; j++) {
+                   		 M3[i][j] = M1[i][j] - M2[i][j];
+           			 }
+       				 }
+				}else if (x1=="*"){
+					for (int i = 0; i < tam; i++) {
+            			for (int j = 0; j < tam; j++) {
+               			 for (int k = 0; k < tam; k++) {
+                  			  M3[i][j] += M1[i][k] * M2[k][j];
+                		}
+           				 }
+       				 }
+				}
+			for(int i=0;i<tam;i++){
+       			for (int j=0;j<tam;j++){
+       				cout<< " ["<<M3[i][j]<<"] ";
+				}
+				cout<<endl;
+			}
+			}
+			
+			
+			cout<<"Operacion terminada..."<<endl;
+		}	
+		}
 	}
 	return 0;					
 	}		
 			
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-				
-			/*Multi de matrices 
-			
-			
-			public int[][] Multiplicacion(int MATRIZ[][], int MATRIZ2[][]) {// inicio del metodo
-        int M3[][] = new int[MATRIZ.length][MATRIZ2[0].length];
-        for (int i = 0; i < MATRIZ.length; i++) {// for controla las filas de la matriz 1
-            for (int j = 0; j < MATRIZ2[0].length; j++) {// controla las columnas de la matriz 2
-                for (int k = 0; k < MATRIZ2.length; k++) {// controla las filas de la matriz 2
-                    M3[i][j] += MATRIZ[i][k] * MATRIZ2[k][j];// se hace la respectiva multiplicacion
-                }// fin del 3er for
-            }// fin del 2do for
-        }// fin del 1er for
 
-        return M3;
-    }// fin del metodo*/
-				
-				
-				
+
 				
 				
 				

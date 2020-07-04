@@ -3,3 +3,7 @@
 Object::Object(){
 	
 }
+
+char Object::getChar(){
+	return 'c';
+}
